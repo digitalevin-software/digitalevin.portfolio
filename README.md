@@ -1,32 +1,74 @@
 # Digitalevin
 
-Kurumsal yazılım hizmetleri sitesi. HTML, CSS ve JavaScript ile hazırlanmıştır; derleme veya npm kurulumu gerektirmez.
+Digitalevin'in portfolyo ve tanıtım sitesi.
 
-## Çalıştırma
+**Stack:** Vite · React 19 · TypeScript · Tailwind CSS v3 · ESLint
 
-`index.html` dosyasını tarayıcıda açın veya proje klasöründe:
+## Kurulum
+
+Node.js 20.19+ veya 22.12+ gerekir.
 
 ```bash
-python -m http.server 8080
+npm install
+npm run dev       # geliştirme sunucusu → http://localhost:5173
 ```
 
-Ardından http://localhost:8080 adresini açın.
+| Komut             | Ne yapar                                            |
+| ----------------- | --------------------------------------------------- |
+| `npm run dev`     | Değişiklikleri anında gösteren geliştirme sunucusu  |
+| `npm run build`   | Tip kontrolü + yayına hazır çıktı (`dist/`)         |
+| `npm run preview` | `dist/` klasörünü yerelde sunar                     |
+| `npm run lint`    | ESLint kontrolü                                     |
 
-## Dosyalar
+## Klasör yapısı
 
-- `index.html`: Sayfa içeriği, stiller ve etkileşimler.
-- `assets/`: Logo ve diğer görsel dosyaları.
+```
+src/
+├─ assets/              Logo, ikonlar, çizimler, ekip avatarları
+├─ components/
+│  ├─ layout/           Header, Footer
+│  ├─ sections/         Sayfanın bölümleri (Hero, Services, Projects…)
+│  └─ projects/         Proje kartı, filtre, detay penceresi, önizlemeler
+├─ config/site.ts       Site adı, e-posta, menü bağlantıları
+├─ data/                Sayfa içeriği: projects.ts, services.ts, team.ts
+├─ lib/utils.ts         Yardımcı fonksiyonlar (cn, pad2)
+├─ styles/              Global stiller
+├─ types/               Ortak TypeScript tipleri
+├─ App.tsx              Bölümlerin sırası
+└─ main.tsx             Giriş noktası
+```
 
-## GitHub'a yükleme
+## Yeni proje eklemek
 
-Bu klasörün içindeki dosyaları reponun köküne yükleyin. `index.html` ve `assets` aynı seviyede olmalıdır.
+`src/data/projects.ts` içindeki `projects` dizisine bir nesne ekleyin:
 
-GitHub Pages için Settings → Pages → Deploy from a branch → main → / (root) seçin.
+```ts
+{
+  id: 'yeni-proje',
+  title: 'Yeni Proje',
+  summary: 'Kartta görünen kısa açıklama.',
+  description: 'Detay penceresinde görünen uzun açıklama.',
+  category: 'web',            // 'web' | 'app'
+  status: 'in-development',   // 'live' | 'in-development' | 'concept'
+  tagline: 'Web uygulaması · React',
+  tone: 'blue',               // 'blue' | 'green'
+  image: yeniProjeGorseli,    // src/assets/projects/ altına koyup import edin
+}
+```
 
-## Düzenleme
+Ekran görüntüsü yoksa `image` yerine koddan çizilen bir önizleme (`preview: 'booking'`) kullanılabilir.
 
-Metinler ve ekip bilgileri `index.html` içinde düzenlenir. Ekip isimleri ve avatarları örnektir. Projeler geliştirme/konsept olarak etiketlenmiştir.
+Hizmetler `src/data/services.ts`, ekip `src/data/team.ts` içinden düzenlenir. Ekip bilgileri şu an örnektir.
 
-İletişim bağlantıları `mailto:` kullanır; e-posta uygulamasını açar. Sunucu, veritabanı veya form gönderim servisi içermez.
+## Yayına alma (GitHub Pages)
 
-Özel alan adı ayarlarını kendi barındırma sağlayıcınızda ayrıca yapın. Bu pakette Sites kimliği, erişim bilgileri veya Git geçmişi bulunmaz.
+`main` dalına her push'ta `.github/workflows/deploy.yml` siteyi derleyip GitHub Pages'e yükler.
+
+İlk seferde reponun **Settings → Pages → Build and deployment → Source** ayarını **GitHub Actions** yapın.
+
+Site göreli yollarla derlenir (`base: './'`), bu yüzden hem özel alan adında hem de `kullanici.github.io/repo-adi/` altında çalışır.
+
+## Notlar
+
+- `src/styles/legacy.css` eski tek sayfalık tasarımdan birebir taşınan stillerdir; yeniden tasarımda Tailwind ile değiştirilecek. O zamana kadar Tailwind'in CSS sıfırlaması (`preflight`) `tailwind.config.ts` içinde kapalıdır.
+- İletişim bağlantıları `mailto:` kullanır; sunucu veya form servisi yoktur.
