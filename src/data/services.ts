@@ -1,40 +1,37 @@
+import { CalendarCheck, Megaphone, MonitorSmartphone, Workflow } from 'lucide-react'
 import type { Service } from '@/types'
-import webIcon from '@/assets/icons/web.svg'
-import erpIcon from '@/assets/icons/erp.svg'
-import bookingIcon from '@/assets/icons/booking.svg'
-import socialIcon from '@/assets/icons/social.svg'
 
 export const services: Service[] = [
   {
     id: 'web',
-    title: 'Web geliştirme & e-ticaret',
+    title: 'Web siteleri ve e-ticaret',
     description:
-      'Markanızın internetteki adresini tasarlıyor, hızlı ve kolay kullanılan web deneyimleri geliştiriyoruz.',
+      'Markanızın internetteki adresini tasarlıyor, hızlı açılan ve kolay kullanılan web siteleri geliştiriyoruz.',
     tags: ['Kurumsal web sitesi', 'Ürün kataloğu', 'E-ticaret'],
-    icon: webIcon,
+    icon: MonitorSmartphone,
   },
   {
     id: 'erp',
-    title: 'Özel yazılım & ERP çözümleri',
+    title: 'Özel yazılım ve ERP',
     description:
-      'Hazır kalıplara sığmayan ihtiyaçlarınız için iş süreçlerinize uygun yazılım çözümleri üretiyoruz.',
+      'Hazır programlara sığmayan iş süreçleriniz için size özel yazılımlar kuruyor, kullandığınız araçları birbirine bağlıyoruz.',
     tags: ['Stok ve sipariş takibi', 'İş akışları', 'Entegrasyonlar'],
-    icon: erpIcon,
+    icon: Workflow,
   },
   {
     id: 'booking',
-    title: 'Randevu sistemleri & QR menü',
+    title: 'Randevu sistemleri ve QR menü',
     description:
-      'Müşterilerinizin işini kolaylaştıran, ekibinizin zamanını geri kazandıran uygulamalar hazırlıyoruz.',
+      'Müşterilerinizin işini kolaylaştıran, ekibinizin zamanını geri kazandıran küçük ama etkili uygulamalar hazırlıyoruz.',
     tags: ['Online randevu', 'Usta seçimi', 'Dijital menü'],
-    icon: bookingIcon,
+    icon: CalendarCheck,
   },
   {
     id: 'social',
     title: 'Sosyal medya yönetimi',
     description:
       'Markanızın dijital sesini birlikte kuruyor, hesaplarınızı düzenli bir içerik planıyla yönetiyoruz.',
-    tags: ['İçerik planlama', 'Görsel tasarım', 'Paylaşım yönetimi'],
-    icon: socialIcon,
+    tags: ['İçerik planı', 'Görsel tasarım', 'Paylaşım yönetimi'],
+    icon: Megaphone,
   },
 ]

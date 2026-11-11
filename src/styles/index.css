@@ -1,3 +1,253 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  /* Açık tema. `.light-scope`: koyu modda da açık kalan alanlar (telefon ekranları, hizmet çizimleri). */
+  :root,
+  .light-scope {
+    --background: 225 33% 98%; /* #F7F8FB */
+    --foreground: 220 57% 14%; /* #0F1C36 */
+    --card: 0 0% 100%;
+    --border: 221 26% 88%;
+    --ring: 218 68% 36%;
+
+    --primary: 218 68% 36%; /* #1E4C9C */
+    --primary-foreground: 0 0% 100%;
+    /* Metin ve ikonlardaki vurgu rengi (koyu modda okunaklı kalması için butonlardan ayrı) */
+    --accent: 218 68% 36%;
+    --secondary: 218 64% 95%;
+    --secondary-foreground: 218 68% 30%;
+    --muted: 220 30% 95%;
+    --muted-foreground: 220 18% 38%;
+
+    /* Proje durumları */
+    --status-live: 152 64% 32%;
+    --status-progress: 36 90% 50%;
+    --status-concept: 218 50% 55%;
+
+    /* Proje önizleme zeminleri */
+    --tone-blue: 218 64% 93%;
+    --tone-green: 150 35% 91%;
+    --tone-amber: 38 80% 91%;
+
+    /* Ev çiziminin gradyanı (logodaki renkler) */
+    --house-from: 219 50% 45%; /* #3A63AD */
+    --house-to: 218 72% 30%; /* #163F85 */
+
+    /* Hero'da çatının altındaki ışık: marka mavisi + sıcak bir ev ışığı */
+    --glow-cool: 220 90% 72%;
+    --glow-warm: 36 100% 70%;
+    --glow-strength: 0.42;
+    --grid-line: 221 30% 82%;
+
+    color-scheme: light;
+  }
+
+  /* Logonun renkleri her iki temada da aynı kalır (iletişim kutusu, butonlar). */
+  :root {
+    --brand-light: 219 50% 45%; /* #3A63AD */
+    --brand-dark: 218 72% 30%; /* #163F85 */
+
+    /* Ev çerçevesi: duvar kalınlığı ve iç boşluk. HouseFrame bu değerleri okur. */
+    --wall: 6px;
+    --gutter: 18px;
+  }
+
+  .dark {
+    --background: 222 50% 9%; /* #0B1222 */
+    --foreground: 220 40% 93%;
+    --card: 222 45% 12%;
+    --border: 221 30% 21%;
+    --ring: 218 85% 70%;
+
+    --primary: 218 66% 50%;
+    --primary-foreground: 0 0% 100%;
+    --accent: 218 85% 72%;
+    --secondary: 222 40% 17%;
+    --secondary-foreground: 218 85% 80%;
+    --muted: 222 35% 15%;
+    --muted-foreground: 220 20% 68%;
+
+    --status-live: 152 55% 45%;
+    --status-progress: 38 92% 55%;
+    --status-concept: 218 70% 66%;
+
+    --tone-blue: 220 40% 18%;
+    --tone-green: 160 25% 16%;
+    --tone-amber: 26 30% 18%;
+
+    --house-from: 219 65% 64%;
+    --house-to: 218 60% 47%;
+
+    --glow-cool: 218 90% 55%;
+    --glow-warm: 32 95% 55%;
+    --glow-strength: 0.32;
+    --grid-line: 221 35% 20%;
+
+    color-scheme: dark;
+  }
+
+  .light-scope {
+    color: hsl(var(--foreground));
+  }
+
+  @media (min-width: 640px) {
+    :root {
+      --wall: 8px;
+      --gutter: 36px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --wall: 10px;
+      --gutter: 64px;
+    }
+  }
+
+  html {
+    scroll-padding-top: 5.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display text-balance;
+    font-optical-sizing: auto;
+  }
+
+  ::selection {
+    @apply bg-primary text-primary-foreground;
+  }
+}
+
+@layer components {
+  /* Ev çerçevesiyle aynı hizada içerik kolonu */
+  .house-inset {
+    padding-inline: calc(var(--wall) + var(--gutter));
+  }
+
+  /* Bölüm başlıklarının ortak ölçüsü */
+  .section-title {
+    @apply font-display font-semibold leading-[1.05] tracking-[-0.03em];
+    font-size: clamp(2rem, 1.3rem + 2.4vw, 3.25rem);
+  }
+
+  /* Hero arka planı: çatının altında yanan ışık */
+  .hero-glow {
+    background:
+      radial-gradient(38% 46% at 72% 42%, hsl(var(--glow-cool) / var(--glow-strength)), transparent 72%),
+      radial-gradient(22% 26% at 84% 66%, hsl(var(--glow-warm) / calc(var(--glow-strength) * 0.6)), transparent 70%),
+      radial-gradient(30% 34% at 12% 18%, hsl(var(--glow-cool) / calc(var(--glow-strength) * 0.35)), transparent 70%);
+  }
+
+  /* İnce ızgara; kenarlara doğru kaybolur */
+  .hero-grid {
+    background-image:
+      linear-gradient(to right, hsl(var(--grid-line) / 0.7) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--grid-line) / 0.7) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse 58% 62% at 70% 45%, #000 20%, transparent 75%);
+  }
+}
+
+@layer utilities {
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
+
+/* ---- Açılış anı: ev çizilir, hero belirir ---- */
+
+@keyframes draw {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  1% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+/* Varsayılan hal: çizgi görünür. Animasyon (fill: both) sadece açılışta gizleyip çizer;
+   animasyon herhangi bir nedenle çalışmazsa ev yine görünür kalır. */
+.house-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: draw var(--dur, 900ms) cubic-bezier(0.65, 0, 0.35, 1) var(--delay, 0ms) both;
+}
+
+.rise {
+  animation: rise 700ms cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0ms) both;
+}
+
+/* Hero'daki küçük kartların yavaşça süzülmesi */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.float {
+  animation: float 7s ease-in-out var(--float-delay, 0s) infinite;
+}
+
+/* ---- Kaydırınca beliren bloklar (useScrollReveal) ----
+   JavaScript çalışmazsa içerik hiç gizlenmez: gizleme sadece <html class="reveal-ready"> ile başlar. */
+
+.reveal {
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-ready .reveal:not(.is-visible) {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .house-path {
+    animation: none;
+  }
+  .rise,
+  .float {
+    animation: none;
+  }
+  .reveal {
+    transition: none;
+  }
+  .reveal-ready .reveal:not(.is-visible) {
+    opacity: 1;
+    transform: none;
+  }
+}

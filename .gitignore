@@ -8,3 +8,6 @@ node_modules/
 dist/
 *.local
 *.log
+
+# Derleme sırasında üretilen geçici sunucu paketi
+dist-ssr/

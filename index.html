@@ -3,13 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="İşletmenizin dijitaldeki evi. Kurumsal web siteleri, ERP, özel yazılım, randevu sistemleri, QR menü ve sosyal medya yönetimi."
-    />
-    <meta name="theme-color" content="#28539a" />
-    <link rel="icon" type="image/png" href="/src/assets/digitalevin-logo.png" />
-    <title>Digitalevin — Özel Yazılım, Web ve ERP Çözümleri</title>
+    <title>Digitalevin</title>
+    <!-- Sayfaya özel başlık, açıklama, canonical ve paylaşım etiketleri derlemede buraya yazılır (scripts/prerender.mjs) -->
+    <!--app-head-->
+    <meta name="theme-color" content="#F7F8FB" />
+    <meta property="og:site_name" content="Digitalevin" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="tr_TR" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <script>
+      // Tema: kayıtlı tercih yoksa sistem ayarı. Sayfa çizilmeden önce çalışır; koyu modda beyaz parlama olmaz.
+      ;(function () {
+        try {
+          var saved = localStorage.getItem('theme')
+          var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
+          if (dark) {
+            document.documentElement.classList.add('dark')
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0B1222')
+          }
+        } catch (e) {}
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

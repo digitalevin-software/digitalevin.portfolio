@@ -1,29 +1,46 @@
+import { LazyMotion, MotionConfig } from 'framer-motion'
+import { Route, Routes } from 'react-router'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
-import { Hero } from '@/components/sections/Hero'
-import { Ticker } from '@/components/sections/Ticker'
-import { VisualStory } from '@/components/sections/VisualStory'
-import { Services } from '@/components/sections/Services'
-import { Projects } from '@/components/sections/Projects'
-import { About } from '@/components/sections/About'
-import { Team } from '@/components/sections/Team'
-import { Contact } from '@/components/sections/Contact'
+import { RouteEffects } from '@/components/layout/RouteEffects'
+import { WhatsAppButton } from '@/components/layout/WhatsAppButton'
+import { HomePage } from '@/pages/HomePage'
+import { ProjectPage } from '@/pages/ProjectPage'
+import { NotFoundPage } from '@/pages/NotFoundPage'
 
-export default function App() {
+// Animasyon motoru ayrı dosyada; ilk açılışta indirilmez.
+const loadMotionFeatures = () => import('@/lib/motion-features').then((mod) => mod.default)
+
+/**
+ * Uygulamanın kabuğu. Router dışarıdan verilir: tarayıcıda BrowserRouter (main.tsx),
+ * derlemede StaticRouter (entry-server.tsx).
+ */
+export function App() {
   return (
-    <div className="wrap">
-      <Header />
-      <main>
-        <Hero />
-        <Ticker />
-        <VisualStory />
-        <Services />
-        <Projects />
-        <About />
-        <Team />
-        <Contact />
-      </main>
-      <Footer />
-    </div>
+    <LazyMotion features={loadMotionFeatures} strict>
+      {/* reducedMotion="user": işletim sisteminde "hareketi azalt" açıksa animasyonlar kapanır. */}
+      <MotionConfig reducedMotion="user">
+        <a
+          href="#icerik"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+        >
+          İçeriğe geç
+        </a>
+
+        <Header />
+
+        <main id="icerik">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/projeler/:id" element={<ProjectPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </main>
+
+        <Footer />
+        <WhatsAppButton />
+        <RouteEffects />
+      </MotionConfig>
+    </LazyMotion>
   )
 }
