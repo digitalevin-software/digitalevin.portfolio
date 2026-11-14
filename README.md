@@ -7,7 +7,7 @@ Fontlar (Bricolage Grotesque, Instrument Sans) `@fontsource` ile siteyle birlikt
 
 ## Kurulum
 
-Node.js 20.19+ veya 22.12+ gerekir.
+Node.js 22.12+ gerekir; CI ve yayın `.nvmrc` dosyasındaki sürümü (24) kullanır. `nvm use` / `fnm use` aynı sürümü kurar.
 
 ```bash
 npm install
@@ -20,6 +20,7 @@ npm run dev       # geliştirme sunucusu → http://localhost:5173
 | `npm run build`   | Tip kontrolü + derleme + her sayfanın statik HTML'e çevrilmesi (`dist/`)   |
 | `npm run preview` | `dist/` klasörünü yerelde sunar                                            |
 | `npm run lint`    | ESLint kontrolü                                                            |
+| `npm run verify`  | `dist/` çıktısını kontrol eder (ön-render, başlık, canonical, yollar, sitemap) |
 
 ## Sayfalar
 
@@ -124,12 +125,49 @@ import ekran1 from '@/assets/projects/yeni-proje-1.png'
 - Link paylaşılınca `public/og-image.png` (1200×630) görünür. Değiştirmek için aynı ölçüde yeni bir PNG koyun.
 - `sitemap.xml` ve `robots.txt` derlemede üretilir. Google Search Console'a sitemap'i ekleyebilirsiniz.
 
-## Yayına alma (GitHub Pages)
+## CI/CD (GitHub Actions)
 
-`main` dalına her push'ta `.github/workflows/deploy.yml` siteyi derleyip GitHub Pages'e yükler.
+| İş akışı                         | Ne zaman                                   | Ne yapar                                                                                       |
+| -------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `.github/workflows/ci.yml`       | `main`'e açılan her PR, haftalık, elle     | Derleme kontrolü, `npm audit`, PR'daki yeni bağımlılıkların incelemesi (yalnızca repo herkese açıksa) |
+| `.github/workflows/deploy.yml`   | `main`'e her push, elle (yalnızca `main`)  | Derler, kontrol eder ve GitHub Pages'e yükler. Bir adım başarısız olursa yayındaki site değişmez |
+| `.github/workflows/build.yml`    | Diğer iki iş akışı çağırır                 | Ortak adımlar: `npm ci` → imza kontrolü → lint → tip kontrolü + derleme + ön-render → `verify` |
+| `.github/workflows/workflow-lint.yml` | `.github/` değişince                  | İş akışlarını actionlint (hatalar) ve zizmor (güvenlik) ile denetler                           |
 
-1. İlk seferde reponun **Settings → Pages → Build and deployment → Source** ayarını **GitHub Actions** yapın.
-2. Sitenin adresi ve alt dizini (`/digitalevin.portfolio/`) iş akışında otomatik belirlenir; özel alan adı bağlarsanız ayrıca bir şey değiştirmeniz gerekmez.
+Dependabot (`.github/dependabot.yml`) npm paketleri ve Actions sürümleri için her pazartesi PR açar.
+
+**Güvenlik önlemleri:** Actions sürümleri commit SHA'sına sabitlenir (Dependabot günceller); her iş yalnızca ihtiyacı olan izinle çalışır; `npm ci --ignore-scripts` paketlerin kurulumda kod çalıştırmasını engeller; paket imzaları doğrulanır; yayına giden derleme npm önbelleği kullanmaz.
+
+### Reponun ayarları (bir kez)
+
+1. **Settings → Pages → Build and deployment → Source:** **GitHub Actions**.
+2. **Settings → Rules → Rulesets → New branch ruleset** (hedef: `main`):
+   - *Require a pull request before merging*
+   - *Require status checks to pass* → `Build / Build`, `npm audit`
+     (`Workflow lint` yalnızca `.github/` değişince çalıştığı için zorunlu yapmayın; yoksa diğer PR'lar bekler.)
+   - *Block force pushes*
+3. **Settings → Advanced Security:** *Dependency graph*, *Dependabot alerts* ve *Dependabot security updates* açık olsun.
+
+## Yayına alma (GitHub Pages + özel alan adı)
+
+`main` dalına her push'ta `deploy.yml` siteyi derleyip GitHub Pages'e yükler. Sitenin adresi ve alt dizini Pages ayarlarından otomatik okunur; alan adı bağlayınca iş akışında bir şey değiştirmeniz gerekmez.
+
+Site **https://www.digitalevin.com** adresinde yayındadır; `digitalevin.com` buraya yönlenir. Alan adı Namecheap'te.
+Alt alan adları (ör. VDS'e giden) bu ayarlardan etkilenmez; kendi kayıtlarıyla çalışmaya devam eder.
+
+**Alan adını bağlamak (bir kez):**
+
+1. **Organizasyon → Settings → Pages → Add a domain:** `digitalevin.com`'u ekleyin, verilen TXT kaydını Namecheap'e girip **Verify**'a basın
+   (başkasının alan adınızı kendi Pages sitesine bağlamasını engeller).
+2. **Repo → Settings → Pages → Custom domain:** `www.digitalevin.com`.
+3. **Namecheap → Domain List → Manage → Advanced DNS:**
+   - `@` için **A** → `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
+     ve **AAAA** → `2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153`, `2606:50c0:8003::153`
+   - `www` için **CNAME** → `digitalevin-software.github.io`
+   - `@` ve `www` için eski (VDS'e giden) kayıtları ve Namecheap'in varsayılan URL Redirect kaydını silin.
+     MX/e-posta kayıtlarına ve alt alan adlarına dokunmayın. Alt alan adı `@`'a CNAME ise önce VDS IP'sine A kaydı yapın.
+4. DNS kontrolü geçip sertifika çıkınca **Enforce HTTPS**'i işaretleyin.
+5. **Actions → Deploy → Run workflow** ile yeniden yayınlayın (canonical ve sitemap yeni adresi alır).
 
 ## Notlar
 

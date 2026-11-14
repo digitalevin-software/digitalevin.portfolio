@@ -1,0 +1,58 @@
+name: Workflow lint
+
+# İş akışı dosyalarını denetler: actionlint sözdizimi ve ifade hatalarını,
+# zizmor güvenlik sorunlarını (şablon enjeksiyonu, geniş izinler, sızan kimlik bilgileri) yakalar.
+on:
+  pull_request:
+    branches: [main]
+    paths: ['.github/**']
+  push:
+    branches: [main]
+    paths: ['.github/**']
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  actionlint:
+    name: actionlint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    env:
+      ACTIONLINT_VERSION: 1.7.12
+      ACTIONLINT_SHA256: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Sürümü ve SHA-256 özeti sabitlenmiş resmi derlemeyi indirir
+      - name: Install actionlint
+        run: |
+          curl -fsSL -o actionlint.tar.gz \
+            "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          echo "${ACTIONLINT_SHA256}  actionlint.tar.gz" | sha256sum --check --strict -
+          tar -xzf actionlint.tar.gz actionlint
+      - name: Run actionlint
+        run: ./actionlint -color
+
+  zizmor:
+    name: zizmor
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: zizmorcore/zizmor-action@45d7276c9ca790aabd705e31ca99c6185c3e76dd # v0.8.1
+        with:
+          version: 1.32.0
+          # Sonuçları günlüğe yazar ve bulgu varsa başarısız olur (Code Scanning gerektirmez)
+          advanced-security: false

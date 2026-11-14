@@ -1,47 +1,62 @@
-name: Deploy to GitHub Pages
+name: Deploy
 
+# main'e her push'ta siteyi derler, kontrol eder ve GitHub Pages'e yükler.
+# Kontrollerden biri başarısız olursa yayındaki site değişmez.
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+permissions: {}
 
+# Yayınlar sırayla yapılır; süren bir yayın yarıda kesilmez
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  build:
+  configure:
+    name: Read Pages settings
+    # Elle tetiklense bile yalnızca main yayına alınır
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pages: read
+    outputs:
+      base-path: ${{ steps.pages.outputs.base_path }}
+      base-url: ${{ steps.pages.outputs.base_url }}
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: npm
-      # Sitenin adresini ve alt dizinini verir (örn. /digitalevin.portfolio veya özel alan adında boş)
+      # Sitenin adresini ve alt dizinini verir: özel alan adında "https://alanadi.com" ve "",
+      # alan adı yoksa "https://<org>.github.io/digitalevin.portfolio" ve "/digitalevin.portfolio"
       - id: pages
-        uses: actions/configure-pages@v5
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run build
-        env:
-          BASE_PATH: ${{ steps.pages.outputs.base_path }}/
-          VITE_SITE_URL: ${{ steps.pages.outputs.base_url }}
-      - uses: actions/upload-pages-artifact@v4
-        with:
-          path: dist
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+  build:
+    name: Build
+    needs: configure
+    # ci.yml'deki açıklamaya bakın: "$/..." actionlint desteği gelince kullanılacak
+    uses: ./.github/workflows/build.yml # zizmor: ignore[self-repository]
+    permissions:
+      contents: read
+    with:
+      base-path: ${{ needs.configure.outputs.base-path }}/
+      site-url: ${{ needs.configure.outputs.base-url }}
+      pages-artifact: true
+      # Yayına giden derleme önbellek kullanmaz
+      cache: false
 
   deploy:
+    name: Deploy
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
