@@ -63,6 +63,15 @@ export function headForPath(pathname: string): HeadData {
     }
   }
 
+  if (/^\/gizlilik\/?$/.test(pathname)) {
+    return {
+      title: 'Gizlilik ve Çerez Politikası — Digitalevin',
+      description:
+        'Digitalevin gizlilik ve çerez politikası: iletişim bilgilerinizin kullanımı, çerezler, ürünlerimizdeki Google AdSense reklamları ve KVKK kapsamındaki haklarınız.',
+      path: '/gizlilik/',
+    }
+  }
+
   const match = pathname.match(/^\/projeler\/([^/]+)\/?$/)
   const project = match && projects.find((p) => p.id === decodeURIComponent(match[1]))
   if (project) {

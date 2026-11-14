@@ -1,4 +1,5 @@
 import { useId, useState, type FormEvent } from 'react'
+import { Link } from 'react-router'
 import { CircleCheck, LoaderCircle, Send } from 'lucide-react'
 import { mailto, site } from '@/config/site'
 import { packages } from '@/data/packages'
@@ -213,7 +214,15 @@ export function ContactForm() {
       )}
 
       <div className="flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-muted-foreground">Bilgileriniz yalnızca size dönüş yapmak için kullanılır.</p>
+        <p className="text-xs text-muted-foreground">
+          Bilgileriniz yalnızca size dönüş yapmak için kullanılır.{' '}
+          <Link
+            to="/gizlilik/"
+            className="rounded-sm underline underline-offset-2 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            Gizlilik Politikası
+          </Link>
+        </p>
         <Button type="submit" size="lg" disabled={status === 'sending'} className="w-full sm:w-auto">
           {status === 'sending' ? (
             <>

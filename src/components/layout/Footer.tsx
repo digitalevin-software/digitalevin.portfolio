@@ -67,9 +67,14 @@ export function Footer() {
           <span suppressHydrationWarning>
             © {year} {site.name}
           </span>
-          <a href="#" className={link}>
-            Başa dön
-          </a>
+          <div className="flex items-center gap-5">
+            <Link to="/gizlilik/" className={link}>
+              Gizlilik Politikası
+            </Link>
+            <a href="#" className={link}>
+              Başa dön
+            </a>
+          </div>
         </div>
       </Container>
     </footer>

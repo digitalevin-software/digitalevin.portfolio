@@ -7,6 +7,7 @@ import { WhatsAppButton } from '@/components/layout/WhatsAppButton'
 import { HomePage } from '@/pages/HomePage'
 import { ProjectPage } from '@/pages/ProjectPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
+import { PrivacyPage } from '@/pages/PrivacyPage'
 
 // Animasyon motoru ayrı dosyada; ilk açılışta indirilmez.
 const loadMotionFeatures = () => import('@/lib/motion-features').then((mod) => mod.default)
@@ -33,6 +34,7 @@ export function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/projeler/:id" element={<ProjectPage />} />
+            <Route path="/gizlilik" element={<PrivacyPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>

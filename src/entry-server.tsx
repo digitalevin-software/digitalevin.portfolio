@@ -15,6 +15,7 @@ import { headForPath, renderHeadTags } from './lib/head'
 export const pages = [
   { path: '/', file: 'index.html', sitemap: true },
   ...projects.map((p) => ({ path: projectPath(p), file: `projeler/${p.id}/index.html`, sitemap: true })),
+  { path: '/gizlilik/', file: 'gizlilik/index.html', sitemap: true },
   // GitHub Pages bulunamayan her adres için 404.html'i gösterir
   { path: '/404/', file: '404.html', sitemap: false },
 ]
