@@ -1,0 +1,79 @@
+name: Build
+
+# Paylaşılan derleme adımları. ci.yml ve deploy.yml bunu çağırır; doğrudan tetiklenmez.
+# Sırasıyla: bağımlılık kurulumu → imza kontrolü → lint → tip kontrolü + derleme + ön-render → çıktı kontrolü.
+on:
+  workflow_call:
+    inputs:
+      base-path:
+        description: Sitenin yayınlandığı alt dizin, "/" ile başlar ve biter (örn. "/" veya "/digitalevin.portfolio/")
+        type: string
+        required: true
+      site-url:
+        description: Sitenin tam adresi (canonical, sitemap). Boşsa src/config/site.ts içindeki varsayılan kullanılır.
+        type: string
+        default: ''
+      cache:
+        description: npm önbelleği kullanılsın mı. Yayına giden derlemede kapalı tutulur (önbellek zehirlenmesine karşı).
+        type: boolean
+        default: false
+      pages-artifact:
+        description: Çıktıyı GitHub Pages'e yüklenecek biçimde paketle
+        type: boolean
+        default: false
+
+permissions: {}
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    env:
+      BASE_PATH: ${{ inputs.base-path }}
+      VITE_SITE_URL: ${{ inputs.site-url }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: ${{ inputs.cache && 'npm' || '' }}
+          package-manager-cache: false
+
+      # --ignore-scripts: bağımlılıkların kurulum sırasında kod çalıştırmasını engeller
+      # (yalnızca macOS'a özel, opsiyonel fsevents'in kurulum betiği var; Linux'ta gerekmez)
+      - name: Install dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Verify registry signatures
+        run: npm audit signatures
+
+      - name: Lint
+        run: npm run lint
+
+      # tsc -b (tip kontrolü) + vite build + SSR build + prerender
+      - name: Build
+        run: npm run build
+
+      - name: Verify build output
+        run: npm run verify
+
+      - name: Upload Pages artifact
+        if: inputs.pages-artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: dist
+
+      - name: Upload build output
+        if: ${{ !inputs.pages-artifact }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dist
+          path: dist
+          if-no-files-found: error
+          retention-days: 7

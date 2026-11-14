@@ -9,8 +9,11 @@ export const site = {
   email: 'digitaleviniz@gmail.com',
   city: 'İstanbul',
 
-  /** Sitenin tam adresi (sonunda / olmadan). Yayında GitHub Actions bunu otomatik verir. */
-  url: (import.meta.env.VITE_SITE_URL || 'https://digitalevin-software.github.io/digitalevin.portfolio').replace(/\/$/, ''),
+  /**
+   * Sitenin tam adresi (sonunda / olmadan). Yayında GitHub Actions bunu Pages ayarlarından
+   * otomatik verir; buradaki değer yerel derlemelerde ve CI'da kullanılır.
+   */
+  url: (import.meta.env.VITE_SITE_URL || 'https://www.digitalevin.com').replace(/\/$/, ''),
 
   /** WhatsApp numarası: ülke koduyla, boşluksuz. Örn. '905321234567'. Boşsa WhatsApp butonları gizlenir. */
   whatsapp: '',

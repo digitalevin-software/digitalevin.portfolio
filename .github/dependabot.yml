@@ -1,0 +1,32 @@
+version: 2
+updates:
+  # npm paketleri: haftalık; küçük güncellemeler tek PR'da toplanır, büyük sürümler ayrı PR olur.
+  # cooldown: yeni yayınlanan bir sürüm 7 gün beklemeden önerilmez (ele geçirilmiş paketlere karşı).
+  # Güvenlik güncellemeleri cooldown'a ve haftalık takvime takılmaz, hemen açılır.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: deps
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+
+  # GitHub Actions: iş akışlarında sabitlenmiş commit SHA'larını ve sürüm yorumlarını günceller
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns: ['*']
