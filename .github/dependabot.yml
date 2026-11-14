@@ -16,6 +16,14 @@ updates:
     groups:
       minor-and-patch:
         update-types: [minor, patch]
+    # Elle yapılması gereken büyük sürüm geçişleri. Bu paketlerin küçük/yama güncellemeleri gelmeye devam eder.
+    ignore:
+      # typescript-eslint henüz TypeScript 7'yi desteklemiyor (peer: <6.1.0); destek gelince kaldırın
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']
+      # Tailwind 4 yeni yapılandırma sistemi ve PostCSS eklentisi istiyor; ayrı bir geçiş işi
+      - dependency-name: tailwindcss
+        update-types: ['version-update:semver-major']
 
   # GitHub Actions: iş akışlarında sabitlenmiş commit SHA'larını ve sürüm yorumlarını günceller
   - package-ecosystem: github-actions
