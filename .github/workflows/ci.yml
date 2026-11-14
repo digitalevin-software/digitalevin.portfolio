@@ -19,7 +19,9 @@ concurrency:
 jobs:
   build:
     name: Build
-    uses: ./.github/workflows/build.yml
+    # İş seviyesindeki çağrı GitHub tarafından commit'ten çözülür (çalışma anındaki dosya sistemi devrede değil).
+    # "$/..." sözdizimini actionlint 1.7.12 henüz tanımıyor ve girdi kontrolünü kaybettiriyor; destek gelince geçilecek.
+    uses: ./.github/workflows/build.yml # zizmor: ignore[self-repository]
     permissions:
       contents: read
     with:

@@ -35,7 +35,8 @@ jobs:
   build:
     name: Build
     needs: configure
-    uses: ./.github/workflows/build.yml
+    # ci.yml'deki açıklamaya bakın: "$/..." actionlint desteği gelince kullanılacak
+    uses: ./.github/workflows/build.yml # zizmor: ignore[self-repository]
     permissions:
       contents: read
     with:
