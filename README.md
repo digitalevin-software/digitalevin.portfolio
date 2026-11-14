@@ -129,7 +129,7 @@ import ekran1 from '@/assets/projects/yeni-proje-1.png'
 
 | İş akışı                         | Ne zaman                                   | Ne yapar                                                                                       |
 | -------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| `.github/workflows/ci.yml`       | `main`'e açılan her PR, haftalık, elle     | Derleme kontrolü, `npm audit`, PR'daki yeni bağımlılıkların güvenlik ve lisans incelemesi      |
+| `.github/workflows/ci.yml`       | `main`'e açılan her PR, haftalık, elle     | Derleme kontrolü, `npm audit`, PR'daki yeni bağımlılıkların incelemesi (yalnızca repo herkese açıksa) |
 | `.github/workflows/deploy.yml`   | `main`'e her push, elle (yalnızca `main`)  | Derler, kontrol eder ve GitHub Pages'e yükler. Bir adım başarısız olursa yayındaki site değişmez |
 | `.github/workflows/build.yml`    | Diğer iki iş akışı çağırır                 | Ortak adımlar: `npm ci` → imza kontrolü → lint → tip kontrolü + derleme + ön-render → `verify` |
 | `.github/workflows/workflow-lint.yml` | `.github/` değişince                  | İş akışlarını actionlint (hatalar) ve zizmor (güvenlik) ile denetler                           |
@@ -143,7 +143,7 @@ Dependabot (`.github/dependabot.yml`) npm paketleri ve Actions sürümleri için
 1. **Settings → Pages → Build and deployment → Source:** **GitHub Actions**.
 2. **Settings → Rules → Rulesets → New branch ruleset** (hedef: `main`):
    - *Require a pull request before merging*
-   - *Require status checks to pass* → `Build / Build`, `npm audit`, `Dependency review`
+   - *Require status checks to pass* → `Build / Build`, `npm audit`
      (`Workflow lint` yalnızca `.github/` değişince çalıştığı için zorunlu yapmayın; yoksa diğer PR'lar bekler.)
    - *Block force pushes*
 3. **Settings → Advanced Security:** *Dependency graph*, *Dependabot alerts* ve *Dependabot security updates* açık olsun.

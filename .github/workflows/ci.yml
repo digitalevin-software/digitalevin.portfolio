@@ -45,9 +45,11 @@ jobs:
       # package-lock.json'daki tüm paketleri (geliştirme araçları dahil) bilinen açıklara karşı tarar
       - run: npm audit --audit-level=moderate
 
+  # Özel (private) repolarda GitHub Advanced Security gerektirir; repo özelken atlanır.
+  # Bilinen açıklar her durumda yukarıdaki npm audit işiyle yakalanır.
   dependency-review:
     name: Dependency review
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && !github.event.repository.private
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
